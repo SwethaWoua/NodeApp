@@ -37,6 +37,16 @@ node {
     }
 
     stage('Push image') {
+	    
+	     withCredentials([usernamePassword( credentialsId: 'docker-hub-credentials', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
+        def registry_url = "registry.hub.docker.com/"
+        bat "docker login -u 'woualabs07' -p 'Swetha07!' ${registry_url}"
+        docker.withRegistry("http://${registry_url}", "docker-hub-credentials") {
+            // Push your image now
+            bat "docker push username/foldername:build"
+        }
+    }
+	    
         /* 
 			You would need to first register with DockerHub before you can push images to your account
 		*/
