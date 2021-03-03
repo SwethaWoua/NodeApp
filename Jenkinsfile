@@ -19,15 +19,9 @@ node {
         }
     }
 stage('Push image') {
-    withCredentials([usernamePassword( credentialsId: 'Swetha07!', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
-        def registry_url = "registry.hub.docker.com/"
-        bat "docker login -u $USER -p $PASSWORD ${registry_url}"
-        docker.withRegistry("http://${registry_url}", "docker-hub-credentials") {
-            // Push your image now
-            bat "docker push username/foldername:build"
+        withDockerRegistry([ credentialsId: "Swetha07!", url: "" ]) {
+        bat "docker push woualabs07/nodeapp:build"
         }
-    }
-}
 
     /*stage('Push image') {
 	       
