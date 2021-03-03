@@ -1,26 +1,33 @@
-pipeline {
- environment {
-    registry = "woualabs07/nodeapp"
-    registryCredential = 'Swetha07!'
-    dockerImage = ''
-  }
-    agent any
-    stages{
-stage('Building image') {
-                 steps{
-                   script {
-                     dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                   }
-                 }
-               }
- stage('Deploy Image') {
-                    steps{
-                      script {
-                        docker.withRegistry( '', registryCredential ) {
-                          dockerImage.push()
-                        }
-                      }
-                    }
-                  }
+node {
+    def app 
+    stage('Clone repository') {
+        /* Cloning the Repository to our Workspace */
+
+        checkout scm
+    }
+
+    stage('Build image') {
+        /* This builds the actual image */
+
+        app = docker.build("woualabs07/nodeapp")
+    }
+
+    stage('Test image') {
+        
+        app.inside {
+            echo "Tests passed"
+        }
+    }
+
+    stage('Push image') {
+	       
+	  /* 
+	You would need to first register with DockerHub before you can push images to your account
+		*/
+       docker.withRegistry('','Swetha07!') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
+            }
+                echo "Trying to Push Docker Build to DockerHub"
     }
 }
